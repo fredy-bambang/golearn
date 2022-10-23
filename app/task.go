@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"net/http"
 	"time"
 
 	"github.com/fredy-bambang/golearn/app/database"
@@ -9,6 +10,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	"github.com/uptrace/bun"
+	"github.com/uptrace/bunrouter"
 )
 
 type (
@@ -123,12 +125,23 @@ func (s *service) GetTask(ctx context.Context, input *GetTaskInput) (*GetTaskOut
 	return &GetTaskOutput{Task: task}, err
 }
 
-func (s *service) ListTasks(ctx context.Context, input *ListTasksInput) (*ListTasksOutput, error) {
-	err := s.validate.Struct(input)
+func (s *service) ListTasks(w http.ResponseWriter, req bunrouter.Request) error {
+	// err := s.validate.Struct(input)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	tasks, err := view.ListTasks(req.Context(), s.db)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	tasks, err := view.ListTasks(ctx, s.db)
-	return &ListTasksOutput{Data: tasks}, err
+	err = bunrouter.JSON(w, bunrouter.H{
+		"tasks": tasks,
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

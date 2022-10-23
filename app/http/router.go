@@ -25,6 +25,7 @@ func (s *Server) Routes() *bunrouter.Router {
 		g.GET("/users/:id", DebugHandler)
 		g.GET("/users/current", DebugHandler)
 		g.GET("/users/*path", DebugHandler)
+		g.GET("/tasks", s.svc.ListTasks)
 	})
 
 	return router

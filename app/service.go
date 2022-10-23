@@ -2,8 +2,10 @@ package app
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/uptrace/bun"
+	"github.com/uptrace/bunrouter"
 	"gopkg.in/go-playground/validator.v9"
 )
 
@@ -13,7 +15,7 @@ type Service interface {
 	CompleteTask(context.Context, *CompleteTaskInput) error
 	DeleteTask(context.Context, *DeleteTaskInput) error
 	GetTask(context.Context, *GetTaskInput) (*GetTaskOutput, error)
-	ListTasks(context.Context, *ListTasksInput) (*ListTasksOutput, error)
+	ListTasks(w http.ResponseWriter, req bunrouter.Request) error
 }
 
 type service struct {
